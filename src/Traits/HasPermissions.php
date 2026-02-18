@@ -15,8 +15,6 @@ trait HasPermissions
 
     /**
      * Get all permissions for the user (via roles).
-     *
-     * @return \Illuminate\Support\Collection
      */
     public function permissions(): Collection
     {
@@ -35,8 +33,6 @@ trait HasPermissions
 
     /**
      * Load all permissions from user's roles.
-     *
-     * @return \Illuminate\Support\Collection
      */
     protected function loadPermissions(): Collection
     {
@@ -51,8 +47,7 @@ trait HasPermissions
     /**
      * Determine if the user has the given permission.
      *
-     * @param string|int|\Williamug\Permitted\Models\Permission $permission
-     * @return bool
+     * @param  string|int|\Williamug\Permitted\Models\Permission  $permission
      */
     public function hasPermission($permission): bool
     {
@@ -82,8 +77,7 @@ trait HasPermissions
     /**
      * Alias for hasPermission.
      *
-     * @param string|int|\Williamug\Permitted\Models\Permission $permission
-     * @return bool
+     * @param  string|int|\Williamug\Permitted\Models\Permission  $permission
      */
     public function can($permission): bool
     {
@@ -92,9 +86,6 @@ trait HasPermissions
 
     /**
      * Determine if the user has any of the given permissions.
-     *
-     * @param array $permissions
-     * @return bool
      */
     public function hasAnyPermission(array $permissions): bool
     {
@@ -109,14 +100,11 @@ trait HasPermissions
 
     /**
      * Determine if the user has all of the given permissions.
-     *
-     * @param array $permissions
-     * @return bool
      */
     public function hasAllPermissions(array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if (!$this->hasPermission($permission)) {
+            if (! $this->hasPermission($permission)) {
                 return false;
             }
         }
@@ -126,23 +114,20 @@ trait HasPermissions
 
     /**
      * Check for wildcard permission match.
-     *
-     * @param string $permission
-     * @return bool
      */
     protected function hasWildcardPermission(string $permission): bool
     {
         $parts = explode('.', $permission);
-        
+
         // Check for exact wildcard match (e.g., 'users.*')
-        $wildcardPermission = $parts[0] . '.*';
+        $wildcardPermission = $parts[0].'.*';
         if ($this->permissions()->contains('name', $wildcardPermission)) {
             return true;
         }
 
         // Check for progressive wildcard matches (e.g., 'users.posts.*' for 'users.posts.edit')
         for ($i = count($parts) - 1; $i > 0; $i--) {
-            $wildcard = implode('.', array_slice($parts, 0, $i)) . '.*';
+            $wildcard = implode('.', array_slice($parts, 0, $i)).'.*';
             if ($this->permissions()->contains('name', $wildcard)) {
                 return true;
             }
@@ -153,8 +138,6 @@ trait HasPermissions
 
     /**
      * Get the user's permission names.
-     *
-     * @return \Illuminate\Support\Collection
      */
     public function getPermissionNames(): Collection
     {
@@ -164,25 +147,24 @@ trait HasPermissions
     /**
      * Check if the user has a permission via a specific role.
      *
-     * @param string|int|\Williamug\Permitted\Models\Permission $permission
-     * @param string|int|\Williamug\Permitted\Models\Role $role
-     * @return bool
+     * @param  string|int|\Williamug\Permitted\Models\Permission  $permission
+     * @param  string|int|\Williamug\Permitted\Models\Role  $role
      */
     public function hasPermissionViaRole($permission, $role): bool
     {
-        if (!$this->hasRole($role)) {
+        if (! $this->hasRole($role)) {
             return false;
         }
 
         $roleModel = config('permitted.models.role');
-        
+
         if (is_string($role)) {
             $role = $roleModel::where('name', $role)->first();
         } elseif (is_numeric($role)) {
             $role = $roleModel::find($role);
         }
 
-        if (!$role) {
+        if (! $role) {
             return false;
         }
 
@@ -194,7 +176,7 @@ trait HasPermissions
             $permission = $perm ? $perm->name : null;
         }
 
-        if (!$permission) {
+        if (! $permission) {
             return false;
         }
 
@@ -203,8 +185,6 @@ trait HasPermissions
 
     /**
      * Get all permissions grouped by role.
-     *
-     * @return \Illuminate\Support\Collection
      */
     public function getPermissionsByRole(): Collection
     {
@@ -216,12 +196,11 @@ trait HasPermissions
     /**
      * Check if user has permission to a specific module.
      *
-     * @param string|int $module
-     * @return bool
+     * @param  string|int  $module
      */
     public function hasModuleAccess($module): bool
     {
-        if (!config('permitted.modules.enabled')) {
+        if (! config('permitted.modules.enabled')) {
             return true;
         }
 
@@ -230,19 +209,19 @@ trait HasPermissions
         }
 
         $moduleModel = config('permitted.models.module');
-        
+
         if (is_string($module)) {
             $module = $moduleModel::where('name', $module)->first();
         } elseif (is_numeric($module)) {
             $module = $moduleModel::find($module);
         }
 
-        if (!$module) {
+        if (! $module) {
             return false;
         }
 
         $modulePermissions = $module->getAllPermissions();
-        
+
         foreach ($modulePermissions as $permission) {
             if ($this->hasPermission($permission->name)) {
                 return true;

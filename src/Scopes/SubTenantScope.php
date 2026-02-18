@@ -16,15 +16,15 @@ class SubTenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (!config('permitted.multi_tenancy.enabled')) {
+        if (! config('permitted.multi_tenancy.enabled')) {
             return;
         }
 
-        if (!config('permitted.tenant.sub_tenant.enabled')) {
+        if (! config('permitted.tenant.sub_tenant.enabled')) {
             return;
         }
 
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 

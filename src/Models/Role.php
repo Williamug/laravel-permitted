@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Williamug\Permitted\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Williamug\Permitted\Scopes\TenantScope;
 use Williamug\Permitted\Scopes\SubTenantScope;
+use Williamug\Permitted\Scopes\TenantScope;
 
 class Role extends Model
 {
@@ -40,10 +40,10 @@ class Role extends Model
 
         // Apply tenant scopes if multi-tenancy is enabled
         if (config('permitted.multi_tenancy.enabled')) {
-            static::addGlobalScope(new TenantScope());
-            
+            static::addGlobalScope(new TenantScope);
+
             if (config('permitted.tenant.sub_tenant.enabled')) {
-                static::addGlobalScope(new SubTenantScope());
+                static::addGlobalScope(new SubTenantScope);
             }
         }
 
@@ -52,7 +52,7 @@ class Role extends Model
             if (config('permitted.multi_tenancy.enabled') && Auth::check()) {
                 $user = Auth::user();
                 $tenantKey = config('permitted.tenant.foreign_key');
-                
+
                 if (method_exists($user, 'getTenantId')) {
                     $model->{$tenantKey} = $user->getTenantId();
                 } elseif (isset($user->{$tenantKey})) {
@@ -61,7 +61,7 @@ class Role extends Model
 
                 if (config('permitted.tenant.sub_tenant.enabled')) {
                     $subTenantKey = config('permitted.tenant.sub_tenant.foreign_key');
-                    
+
                     if (method_exists($user, 'getSubTenantId')) {
                         $model->{$subTenantKey} = $user->getSubTenantId();
                     } elseif (isset($user->{$subTenantKey})) {
@@ -88,8 +88,6 @@ class Role extends Model
 
     /**
      * Get the table associated with the model.
-     *
-     * @return string
      */
     public function getTable(): string
     {
@@ -102,7 +100,7 @@ class Role extends Model
     public function permissions(): BelongsToMany
     {
         $permissionModel = config('permitted.models.permission');
-        
+
         return $this->belongsToMany(
             $permissionModel,
             config('permitted.table_names.permission_role'),
@@ -117,7 +115,7 @@ class Role extends Model
     public function users(): BelongsToMany
     {
         $userModel = config('permitted.user.model');
-        
+
         return $this->belongsToMany(
             $userModel,
             config('permitted.table_names.role_user'),
@@ -131,13 +129,13 @@ class Role extends Model
      */
     public function tenant(): ?BelongsTo
     {
-        if (!config('permitted.multi_tenancy.enabled')) {
+        if (! config('permitted.multi_tenancy.enabled')) {
             return null;
         }
 
         $tenantModel = config('permitted.tenant.model');
         $foreignKey = config('permitted.tenant.foreign_key');
-        
+
         return $this->belongsTo($tenantModel, $foreignKey);
     }
 
@@ -146,20 +144,20 @@ class Role extends Model
      */
     public function subTenant(): ?BelongsTo
     {
-        if (!config('permitted.tenant.sub_tenant.enabled')) {
+        if (! config('permitted.tenant.sub_tenant.enabled')) {
             return null;
         }
 
         $subTenantModel = config('permitted.tenant.sub_tenant.model');
         $foreignKey = config('permitted.tenant.sub_tenant.foreign_key');
-        
+
         return $this->belongsTo($subTenantModel, $foreignKey);
     }
 
     /**
      * Grant permission(s) to the role.
      *
-     * @param string|int|array|\Williamug\Permitted\Models\Permission $permissions
+     * @param  string|int|array|\Williamug\Permitted\Models\Permission  $permissions
      * @return $this
      */
     public function givePermissionTo(...$permissions): self
@@ -170,8 +168,9 @@ class Role extends Model
                 if ($permission instanceof Permission) {
                     return $permission;
                 }
-                
+
                 $permissionModel = config('permitted.models.permission');
+
                 return is_numeric($permission)
                     ? $permissionModel::findOrFail($permission)
                     : $permissionModel::where('name', $permission)->firstOrFail();
@@ -179,7 +178,7 @@ class Role extends Model
             ->all();
 
         $this->permissions()->syncWithoutDetaching($permissions);
-        
+
         static::clearCache();
 
         return $this;
@@ -188,7 +187,7 @@ class Role extends Model
     /**
      * Revoke permission(s) from the role.
      *
-     * @param string|int|array|\Williamug\Permitted\Models\Permission $permissions
+     * @param  string|int|array|\Williamug\Permitted\Models\Permission  $permissions
      * @return $this
      */
     public function revokePermissionTo(...$permissions): self
@@ -199,19 +198,19 @@ class Role extends Model
                 if ($permission instanceof Permission) {
                     return $permission->id;
                 }
-                
+
                 $permissionModel = config('permitted.models.permission');
                 $perm = is_numeric($permission)
                     ? $permissionModel::find($permission)
                     : $permissionModel::where('name', $permission)->first();
-                    
+
                 return $perm ? $perm->id : null;
             })
             ->filter()
             ->all();
 
         $this->permissions()->detach($permissions);
-        
+
         static::clearCache();
 
         return $this;
@@ -220,13 +219,12 @@ class Role extends Model
     /**
      * Sync permissions for the role.
      *
-     * @param array $permissions
      * @return $this
      */
     public function syncPermissions(array $permissions): self
     {
         $this->permissions()->sync($permissions);
-        
+
         static::clearCache();
 
         return $this;
@@ -235,8 +233,7 @@ class Role extends Model
     /**
      * Check if role has a specific permission.
      *
-     * @param string|int|\Williamug\Permitted\Models\Permission $permission
-     * @return bool
+     * @param  string|int|\Williamug\Permitted\Models\Permission  $permission
      */
     public function hasPermissionTo($permission): bool
     {
@@ -248,7 +245,7 @@ class Role extends Model
             $permission = $perm ? $perm->name : null;
         }
 
-        if (!$permission) {
+        if (! $permission) {
             return false;
         }
 
@@ -269,8 +266,6 @@ class Role extends Model
     /**
      * Find a role by name.
      *
-     * @param string $name
-     * @param string|null $guardName
      * @return static|null
      */
     public static function findByName(string $name, ?string $guardName = null): ?self
@@ -285,8 +280,6 @@ class Role extends Model
     /**
      * Find or create a role by name.
      *
-     * @param string $name
-     * @param string|null $guardName
      * @return static
      */
     public static function findOrCreate(string $name, ?string $guardName = null): self
@@ -295,7 +288,7 @@ class Role extends Model
 
         $role = static::findByName($name, $guardName);
 
-        if (!$role) {
+        if (! $role) {
             $role = static::create([
                 'name' => $name,
                 'guard_name' => $guardName,

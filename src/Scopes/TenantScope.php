@@ -16,11 +16,11 @@ class TenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (!config('permitted.multi_tenancy.enabled')) {
+        if (! config('permitted.multi_tenancy.enabled')) {
             return;
         }
 
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 

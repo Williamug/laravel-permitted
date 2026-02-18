@@ -36,8 +36,6 @@ class Module extends Model
 
     /**
      * Get the table associated with the model.
-     *
-     * @return string
      */
     public function getTable(): string
     {
@@ -50,6 +48,7 @@ class Module extends Model
     public function subModules(): HasMany
     {
         $subModuleModel = config('permitted.models.sub_module');
+
         return $this->hasMany($subModuleModel, 'module_id');
     }
 
@@ -59,13 +58,12 @@ class Module extends Model
     public function permissions(): HasMany
     {
         $permissionModel = config('permitted.models.permission');
+
         return $this->hasMany($permissionModel, 'module_id');
     }
 
     /**
      * Get all permissions for this module (including sub-module permissions).
-     *
-     * @return \Illuminate\Support\Collection
      */
     public function getAllPermissions(): \Illuminate\Support\Collection
     {

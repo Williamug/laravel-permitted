@@ -14,7 +14,7 @@ return new class extends Migration
         $tableNames = config('permitted.table_names');
         $modulesEnabled = config('permitted.modules.enabled');
 
-        if (!$modulesEnabled) {
+        if (! $modulesEnabled) {
             return;
         }
 
@@ -50,7 +50,7 @@ return new class extends Migration
     public function down(): void
     {
         $tableNames = config('permitted.table_names');
-        
+
         if (config('permitted.modules.enabled')) {
             Schema::dropIfExists($tableNames['sub_modules']);
             Schema::dropIfExists($tableNames['modules']);

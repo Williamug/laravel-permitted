@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Williamug\Permitted\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 
 class Permission extends Model
@@ -54,8 +54,6 @@ class Permission extends Model
 
     /**
      * Get the table associated with the model.
-     *
-     * @return string
      */
     public function getTable(): string
     {
@@ -68,7 +66,7 @@ class Permission extends Model
     public function roles(): BelongsToMany
     {
         $roleModel = config('permitted.models.role');
-        
+
         return $this->belongsToMany(
             $roleModel,
             config('permitted.table_names.permission_role'),
@@ -82,11 +80,12 @@ class Permission extends Model
      */
     public function module(): ?BelongsTo
     {
-        if (!config('permitted.modules.enabled')) {
+        if (! config('permitted.modules.enabled')) {
             return null;
         }
 
         $moduleModel = config('permitted.models.module');
+
         return $this->belongsTo($moduleModel, 'module_id');
     }
 
@@ -95,18 +94,19 @@ class Permission extends Model
      */
     public function subModule(): ?BelongsTo
     {
-        if (!config('permitted.modules.enabled')) {
+        if (! config('permitted.modules.enabled')) {
             return null;
         }
 
         $subModuleModel = config('permitted.models.sub_module');
+
         return $this->belongsTo($subModuleModel, 'sub_module_id');
     }
 
     /**
      * Assign this permission to role(s).
      *
-     * @param string|int|array|\Williamug\Permitted\Models\Role $roles
+     * @param  string|int|array|\Williamug\Permitted\Models\Role  $roles
      * @return $this
      */
     public function assignToRole(...$roles): self
@@ -117,8 +117,9 @@ class Permission extends Model
                 if ($role instanceof Role) {
                     return $role;
                 }
-                
+
                 $roleModel = config('permitted.models.role');
+
                 return is_numeric($role)
                     ? $roleModel::findOrFail($role)
                     : $roleModel::where('name', $role)->firstOrFail();
@@ -126,7 +127,7 @@ class Permission extends Model
             ->all();
 
         $this->roles()->syncWithoutDetaching($roles);
-        
+
         static::clearCache();
 
         return $this;
@@ -135,7 +136,7 @@ class Permission extends Model
     /**
      * Remove this permission from role(s).
      *
-     * @param string|int|array|\Williamug\Permitted\Models\Role $roles
+     * @param  string|int|array|\Williamug\Permitted\Models\Role  $roles
      * @return $this
      */
     public function removeFromRole(...$roles): self
@@ -146,19 +147,19 @@ class Permission extends Model
                 if ($role instanceof Role) {
                     return $role->id;
                 }
-                
+
                 $roleModel = config('permitted.models.role');
                 $r = is_numeric($role)
                     ? $roleModel::find($role)
                     : $roleModel::where('name', $role)->first();
-                    
+
                 return $r ? $r->id : null;
             })
             ->filter()
             ->all();
 
         $this->roles()->detach($roles);
-        
+
         static::clearCache();
 
         return $this;
@@ -178,8 +179,6 @@ class Permission extends Model
     /**
      * Find a permission by name.
      *
-     * @param string $name
-     * @param string|null $guardName
      * @return static|null
      */
     public static function findByName(string $name, ?string $guardName = null): ?self
@@ -194,8 +193,6 @@ class Permission extends Model
     /**
      * Find or create a permission by name.
      *
-     * @param string $name
-     * @param string|null $guardName
      * @return static
      */
     public static function findOrCreate(string $name, ?string $guardName = null): self
@@ -204,7 +201,7 @@ class Permission extends Model
 
         $permission = static::findByName($name, $guardName);
 
-        if (!$permission) {
+        if (! $permission) {
             $permission = static::create([
                 'name' => $name,
                 'guard_name' => $guardName,
@@ -216,10 +213,6 @@ class Permission extends Model
 
     /**
      * Create multiple permissions at once.
-     *
-     * @param array $permissions
-     * @param string|null $guardName
-     * @return \Illuminate\Support\Collection
      */
     public static function createMany(array $permissions, ?string $guardName = null): \Illuminate\Support\Collection
     {
@@ -229,9 +222,9 @@ class Permission extends Model
             if (is_string($permission)) {
                 $permission = ['name' => $permission];
             }
-            
+
             $permission['guard_name'] = $permission['guard_name'] ?? $guardName;
-            
+
             return static::create($permission);
         });
     }

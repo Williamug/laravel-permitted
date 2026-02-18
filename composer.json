@@ -4,7 +4,16 @@
     "keywords": [
         "Williamug",
         "laravel",
-        "laravel-permitted"
+        "laravel-permitted",
+        "permitted",
+    "permissions",
+    "roles",
+    "acl",
+    "rbac",
+    "multi-tenancy",
+    "single-tenant",
+    "authorization",
+    "access control"
     ],
     "homepage": "https://github.com/williamug/laravel-permitted",
     "license": "MIT",

@@ -10,157 +10,159 @@ use Illuminate\Support\ServiceProvider;
 use Williamug\Permitted\Middleware\PermissionMiddleware;
 use Williamug\Permitted\Middleware\RoleMiddleware;
 use Williamug\Permitted\Middleware\RoleOrPermissionMiddleware;
+use Williamug\Permitted\Permitted;
 
 class PermittedServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        // Merge config
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/permitted.php',
-            'permitted'
-        );
+  /**
+   * Register services.
+   */
+  public function register(): void
+  {
+    // Merge config
+    $this->mergeConfigFrom(
+      __DIR__ . '/../config/permitted.php',
+      'permitted'
+    );
 
-        // Register the facade
-        $this->app->singleton('permitted', function ($app) {
-            return new PermittedManager($app);
-        });
-    }
+    // Register the facade
+    $this->app->singleton('permitted', function ($app) {
+      return new Permitted($app);
+    });
+  }
 
-    /**
-     * Bootstrap services.
-     */
-    public function boot(): void
-    {
-        // Publish config
-        $this->publishes([
-            __DIR__.'/../config/permitted.php' => config_path('permitted.php'),
-        ], 'permitted-config');
 
-        // Load and publish migrations
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+  /**
+   * Bootstrap services.
+   */
+  public function boot(): void
+  {
+    // Publish config
+    $this->publishes([
+      __DIR__ . '/../config/permitted.php' => config_path('permitted.php'),
+    ], 'permitted-config');
 
-        $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
-        ], 'permitted-migrations');
+    // Load and publish migrations
+    $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        // Register middleware
-        $this->registerMiddleware();
+    $this->publishes([
+      __DIR__ . '/../database/migrations' => database_path('migrations'),
+    ], 'permitted-migrations');
 
-        // Register Blade directives
-        $this->registerBladeDirectives();
-    }
+    // Register middleware
+    $this->registerMiddleware();
 
-    /**
-     * Register middleware.
-     */
-    protected function registerMiddleware(): void
-    {
-        $router = $this->app->make(Router::class);
+    // Register Blade directives
+    $this->registerBladeDirectives();
+  }
 
-        $router->aliasMiddleware(
-            config('permitted.middleware.role', 'role'),
-            RoleMiddleware::class
-        );
+  /**
+   * Register middleware.
+   */
+  protected function registerMiddleware(): void
+  {
+    $router = $this->app->make(Router::class);
 
-        $router->aliasMiddleware(
-            config('permitted.middleware.permission', 'permission'),
-            PermissionMiddleware::class
-        );
+    $router->aliasMiddleware(
+      config('permitted.middleware.role', 'role'),
+      RoleMiddleware::class
+    );
 
-        $router->aliasMiddleware(
-            'role_or_permission',
-            RoleOrPermissionMiddleware::class
-        );
-    }
+    $router->aliasMiddleware(
+      config('permitted.middleware.permission', 'permission'),
+      PermissionMiddleware::class
+    );
 
-    /**
-     * Register Blade directives.
-     */
-    protected function registerBladeDirectives(): void
-    {
-        // @role('admin')
-        Blade::if('role', function ($role) {
-            return auth()->check() && auth()->user()->hasRole($role);
-        });
+    $router->aliasMiddleware(
+      'role_or_permission',
+      RoleOrPermissionMiddleware::class
+    );
+  }
 
-        // @hasrole('admin')
-        Blade::if('hasrole', function ($role) {
-            return auth()->check() && auth()->user()->hasRole($role);
-        });
+  /**
+   * Register Blade directives.
+   */
+  protected function registerBladeDirectives(): void
+  {
+    // @role('admin')
+    Blade::if('role', function ($role) {
+      return auth()->check() && auth()->user()->hasRole($role);
+    });
 
-        // @hasanyrole(['admin', 'editor'])
-        Blade::if('hasanyrole', function ($roles) {
-            if (! is_array($roles)) {
-                $roles = explode('|', $roles);
-            }
+    // @hasrole('admin')
+    Blade::if('hasrole', function ($role) {
+      return auth()->check() && auth()->user()->hasRole($role);
+    });
 
-            return auth()->check() && auth()->user()->hasAnyRole($roles);
-        });
+    // @hasanyrole(['admin', 'editor'])
+    Blade::if('hasanyrole', function ($roles) {
+      if (! is_array($roles)) {
+        $roles = explode('|', $roles);
+      }
 
-        // @hasallroles(['admin', 'editor'])
-        Blade::if('hasallroles', function ($roles) {
-            if (! is_array($roles)) {
-                $roles = explode('|', $roles);
-            }
+      return auth()->check() && auth()->user()->hasAnyRole($roles);
+    });
 
-            return auth()->check() && auth()->user()->hasAllRoles($roles);
-        });
+    // @hasallroles(['admin', 'editor'])
+    Blade::if('hasallroles', function ($roles) {
+      if (! is_array($roles)) {
+        $roles = explode('|', $roles);
+      }
 
-        // @permission('edit posts')
-        Blade::if('permission', function ($permission) {
-            return auth()->check() && auth()->user()->hasPermission($permission);
-        });
+      return auth()->check() && auth()->user()->hasAllRoles($roles);
+    });
 
-        // @haspermission('edit posts')
-        Blade::if('haspermission', function ($permission) {
-            return auth()->check() && auth()->user()->hasPermission($permission);
-        });
+    // @permission('edit posts')
+    Blade::if('permission', function ($permission) {
+      return auth()->check() && auth()->user()->hasPermission($permission);
+    });
 
-        // @hasanypermission(['edit posts', 'delete posts'])
-        Blade::if('hasanypermission', function ($permissions) {
-            if (! is_array($permissions)) {
-                $permissions = explode('|', $permissions);
-            }
+    // @haspermission('edit posts')
+    Blade::if('haspermission', function ($permission) {
+      return auth()->check() && auth()->user()->hasPermission($permission);
+    });
 
-            return auth()->check() && auth()->user()->hasAnyPermission($permissions);
-        });
+    // @hasanypermission(['edit posts', 'delete posts'])
+    Blade::if('hasanypermission', function ($permissions) {
+      if (! is_array($permissions)) {
+        $permissions = explode('|', $permissions);
+      }
 
-        // @hasallpermissions(['edit posts', 'delete posts'])
-        Blade::if('hasallpermissions', function ($permissions) {
-            if (! is_array($permissions)) {
-                $permissions = explode('|', $permissions);
-            }
+      return auth()->check() && auth()->user()->hasAnyPermission($permissions);
+    });
 
-            return auth()->check() && auth()->user()->hasAllPermissions($permissions);
-        });
+    // @hasallpermissions(['edit posts', 'delete posts'])
+    Blade::if('hasallpermissions', function ($permissions) {
+      if (! is_array($permissions)) {
+        $permissions = explode('|', $permissions);
+      }
 
-        // @superadmin
-        Blade::if('superadmin', function () {
-            return auth()->check() && auth()->user()->isSuperAdmin();
-        });
+      return auth()->check() && auth()->user()->hasAllPermissions($permissions);
+    });
 
-        // @unlessrole('guest')
-        Blade::if('unlessrole', function ($role) {
-            return auth()->check() && ! auth()->user()->hasRole($role);
-        });
+    // @superadmin
+    Blade::if('superadmin', function () {
+      return auth()->check() && auth()->user()->isSuperAdmin();
+    });
 
-        // @unlesspermission('edit posts')
-        Blade::if('unlesspermission', function ($permission) {
-            return auth()->check() && ! auth()->user()->hasPermission($permission);
-        });
-    }
+    // @unlessrole('guest')
+    Blade::if('unlessrole', function ($role) {
+      return auth()->check() && ! auth()->user()->hasRole($role);
+    });
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array<string>
-     */
-    public function provides(): array
-    {
-        return ['permitted'];
-    }
+    // @unlesspermission('edit posts')
+    Blade::if('unlesspermission', function ($permission) {
+      return auth()->check() && ! auth()->user()->hasPermission($permission);
+    });
+  }
+
+  /**
+   * Get the services provided by the provider.
+   *
+   * @return array<string>
+   */
+  public function provides(): array
+  {
+    return ['permitted'];
+  }
 }

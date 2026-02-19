@@ -110,14 +110,14 @@ return [
     | - "Academic" module → "Classes" sub-module → manage classes permission
     |
     | WHEN TO USE:
-    | - ✅ Large applications with 50+ permissions
-    | - ✅ Complex systems needing UI grouping (admin panels)
-    | - ✅ When you want to grant access to entire modules at once
+    | - Large applications with 50+ permissions
+    | - Complex systems needing UI grouping (admin panels)
+    | - When you want to grant access to entire modules at once
     |
     | WHEN TO SKIP:
-    | - ❌ Simple apps with < 20 permissions (use flat structure)
-    | - ❌ You prefer Spatie-style flat permissions
-    | - ❌ Third-party integration requiring specific structure
+    | - Simple apps with < 20 permissions (use flat structure)
+    | - You prefer Spatie-style flat permissions
+    | - Third-party integration requiring specific structure
     |
     | Set 'enabled' to false for traditional flat permission structure.
     | Sub-modules are optional even when modules are enabled.
@@ -148,7 +148,7 @@ return [
     | - Perfect for system administrators
     |
     | SECURITY WARNING:
-    | Be VERY careful who you assign this role to! They can do ANYTHING.
+    | Be VERY careful who you assign this role to! They can literally do ANYTHING.
     |
     | CUSTOMIZATION OPTIONS:
     | 1. Change 'role_name' to match your preference (e.g., 'Administrator')

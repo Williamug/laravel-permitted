@@ -11,6 +11,7 @@ use Illuminate\Routing\Router;
 use Williamug\Permitted\Middleware\PermissionMiddleware;
 use Williamug\Permitted\Middleware\RoleMiddleware;
 use Williamug\Permitted\Middleware\RoleOrPermissionMiddleware;
+use Williamug\Permitted\Permitted;
 
 class PermittedServiceProvider extends ServiceProvider
 {
@@ -27,7 +28,7 @@ class PermittedServiceProvider extends ServiceProvider
 
     // Register the facade
     $this->app->singleton('permitted', function ($app) {
-      return new PermittedManager($app);
+      return new Permitted($app);
     });
   }
 

@@ -14,23 +14,19 @@ class RoleOrPermissionMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string  $roleOrPermission
-     * @param  string|null  $guard
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(Request $request, Closure $next, string $roleOrPermission, ?string $guard = null): Response
     {
         $guard = $guard ?? config('auth.defaults.guard');
 
-        if (!Auth::guard($guard)->check()) {
+        if (! Auth::guard($guard)->check()) {
             abort(403, 'Unauthorized: You must be logged in.');
         }
 
         $user = Auth::guard($guard)->user();
 
-        if (!method_exists($user, 'hasRole') || !method_exists($user, 'hasPermission')) {
+        if (! method_exists($user, 'hasRole') || ! method_exists($user, 'hasPermission')) {
             abort(500, 'User model must use HasRoles and HasPermissions traits.');
         }
 

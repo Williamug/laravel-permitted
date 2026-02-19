@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Williamug\Permitted;
 
-use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Routing\Router;
 use Williamug\Permitted\Middleware\PermissionMiddleware;
 use Williamug\Permitted\Middleware\RoleMiddleware;
 use Williamug\Permitted\Middleware\RoleOrPermissionMiddleware;
@@ -31,6 +30,7 @@ class PermittedServiceProvider extends ServiceProvider
       return new Permitted($app);
     });
   }
+
 
   /**
    * Bootstrap services.
@@ -96,17 +96,19 @@ class PermittedServiceProvider extends ServiceProvider
 
     // @hasanyrole(['admin', 'editor'])
     Blade::if('hasanyrole', function ($roles) {
-      if (!is_array($roles)) {
+      if (! is_array($roles)) {
         $roles = explode('|', $roles);
       }
+
       return auth()->check() && auth()->user()->hasAnyRole($roles);
     });
 
     // @hasallroles(['admin', 'editor'])
     Blade::if('hasallroles', function ($roles) {
-      if (!is_array($roles)) {
+      if (! is_array($roles)) {
         $roles = explode('|', $roles);
       }
+
       return auth()->check() && auth()->user()->hasAllRoles($roles);
     });
 
@@ -122,17 +124,19 @@ class PermittedServiceProvider extends ServiceProvider
 
     // @hasanypermission(['edit posts', 'delete posts'])
     Blade::if('hasanypermission', function ($permissions) {
-      if (!is_array($permissions)) {
+      if (! is_array($permissions)) {
         $permissions = explode('|', $permissions);
       }
+
       return auth()->check() && auth()->user()->hasAnyPermission($permissions);
     });
 
     // @hasallpermissions(['edit posts', 'delete posts'])
     Blade::if('hasallpermissions', function ($permissions) {
-      if (!is_array($permissions)) {
+      if (! is_array($permissions)) {
         $permissions = explode('|', $permissions);
       }
+
       return auth()->check() && auth()->user()->hasAllPermissions($permissions);
     });
 
@@ -143,12 +147,12 @@ class PermittedServiceProvider extends ServiceProvider
 
     // @unlessrole('guest')
     Blade::if('unlessrole', function ($role) {
-      return auth()->check() && !auth()->user()->hasRole($role);
+      return auth()->check() && ! auth()->user()->hasRole($role);
     });
 
     // @unlesspermission('edit posts')
     Blade::if('unlesspermission', function ($permission) {
-      return auth()->check() && !auth()->user()->hasPermission($permission);
+      return auth()->check() && ! auth()->user()->hasPermission($permission);
     });
   }
 

@@ -17,13 +17,13 @@ return new class extends Migration
         // Create permissions table
         Schema::create($tableNames['permissions'], function (Blueprint $table) use ($modulesEnabled, $tableNames) {
             $table->id();
-            
+
             // Add module columns if modules are enabled
             if ($modulesEnabled) {
                 $table->foreignId('module_id')->nullable()->constrained($tableNames['modules'])->nullOnDelete();
                 $table->foreignId('sub_module_id')->nullable()->constrained($tableNames['sub_modules'])->nullOnDelete();
             }
-            
+
             $table->string('name');
             $table->string('display_name')->nullable();
             $table->text('description')->nullable();

@@ -20,16 +20,16 @@ return new class extends Migration
         // Create roles table
         Schema::create($tableNames['roles'], function (Blueprint $table) use ($multiTenancy, $tenantKey, $subTenantEnabled, $subTenantKey) {
             $table->id();
-            
+
             // Add tenant columns if multi-tenancy is enabled
             if ($multiTenancy) {
                 $table->unsignedBigInteger($tenantKey)->index();
-                
+
                 if ($subTenantEnabled) {
                     $table->unsignedBigInteger($subTenantKey)->index();
                 }
             }
-            
+
             $table->string('name');
             $table->string('display_name')->nullable();
             $table->text('description')->nullable();

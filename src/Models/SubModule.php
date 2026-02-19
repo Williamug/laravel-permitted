@@ -38,8 +38,6 @@ class SubModule extends Model
 
     /**
      * Get the table associated with the model.
-     *
-     * @return string
      */
     public function getTable(): string
     {
@@ -52,6 +50,7 @@ class SubModule extends Model
     public function module(): BelongsTo
     {
         $moduleModel = config('permitted.models.module');
+
         return $this->belongsTo($moduleModel, 'module_id');
     }
 
@@ -61,6 +60,7 @@ class SubModule extends Model
     public function permissions(): HasMany
     {
         $permissionModel = config('permitted.models.permission');
+
         return $this->hasMany($permissionModel, 'sub_module_id');
     }
 }

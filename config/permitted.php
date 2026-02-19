@@ -2,7 +2,7 @@
 
 return [
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Multi-Tenancy Configuration
     |--------------------------------------------------------------------------
@@ -14,12 +14,12 @@ return [
     |
     */
 
-  'multi_tenancy' => [
-    'enabled' => env('PERMITTED_MULTI_TENANCY', false),
-    'mode' => env('PERMITTED_TENANCY_MODE', 'single_database'), // none, single_database, multi_database
-  ],
+    'multi_tenancy' => [
+        'enabled' => env('PERMITTED_MULTI_TENANCY', false),
+        'mode' => env('PERMITTED_TENANCY_MODE', 'single_database'), // none, single_database, multi_database
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Tenant Configuration
     |--------------------------------------------------------------------------
@@ -30,21 +30,21 @@ return [
     |
     */
 
-  'tenant' => [
-    // Primary tenant model (e.g., Company, Organization, Facility)
-    'model' => env('PERMITTED_TENANT_MODEL', 'App\\Models\\Tenant'),
-    'foreign_key' => env('PERMITTED_TENANT_KEY', 'tenant_id'),
+    'tenant' => [
+        // Primary tenant model (e.g., Company, Organization, Facility)
+        'model' => env('PERMITTED_TENANT_MODEL', 'App\\Models\\Tenant'),
+        'foreign_key' => env('PERMITTED_TENANT_KEY', 'tenant_id'),
 
-    // Secondary tenant level (e.g., Branch, Location, Department)
-    // Set to null if you only need single-level tenancy
-    'sub_tenant' => [
-      'enabled' => env('PERMITTED_SUB_TENANT_ENABLED', false),
-      'model' => env('PERMITTED_SUB_TENANT_MODEL', null),
-      'foreign_key' => env('PERMITTED_SUB_TENANT_KEY', 'sub_tenant_id'),
+        // Secondary tenant level (e.g., Branch, Location, Department)
+        // Set to null if you only need single-level tenancy
+        'sub_tenant' => [
+            'enabled' => env('PERMITTED_SUB_TENANT_ENABLED', false),
+            'model' => env('PERMITTED_SUB_TENANT_MODEL', null),
+            'foreign_key' => env('PERMITTED_SUB_TENANT_KEY', 'sub_tenant_id'),
+        ],
     ],
-  ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Models Configuration
     |--------------------------------------------------------------------------
@@ -54,14 +54,14 @@ return [
     |
     */
 
-  'models' => [
-    'role' => Williamug\Permitted\Models\Role::class,
-    'permission' => Williamug\Permitted\Models\Permission::class,
-    'module' => Williamug\Permitted\Models\Module::class,
-    'sub_module' => Williamug\Permitted\Models\SubModule::class,
-  ],
+    'models' => [
+        'role' => Williamug\Permitted\Models\Role::class,
+        'permission' => Williamug\Permitted\Models\Permission::class,
+        'module' => Williamug\Permitted\Models\Module::class,
+        'sub_module' => Williamug\Permitted\Models\SubModule::class,
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Table Names
     |--------------------------------------------------------------------------
@@ -70,16 +70,16 @@ return [
     |
     */
 
-  'table_names' => [
-    'roles' => 'roles',
-    'permissions' => 'permissions',
-    'modules' => 'modules',
-    'sub_modules' => 'sub_modules',
-    'role_user' => 'role_user',
-    'permission_role' => 'permission_role',
-  ],
+    'table_names' => [
+        'roles' => 'roles',
+        'permissions' => 'permissions',
+        'modules' => 'modules',
+        'sub_modules' => 'sub_modules',
+        'role_user' => 'role_user',
+        'permission_role' => 'permission_role',
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Column Names
     |--------------------------------------------------------------------------
@@ -88,13 +88,13 @@ return [
     |
     */
 
-  'column_names' => [
-    'role_pivot_key' => 'role_id',
-    'permission_pivot_key' => 'permission_id',
-    'user_pivot_key' => 'user_id',
-  ],
+    'column_names' => [
+        'role_pivot_key' => 'role_id',
+        'permission_pivot_key' => 'permission_id',
+        'user_pivot_key' => 'user_id',
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Module System (Optional - Recommended for Large Apps)
     |--------------------------------------------------------------------------
@@ -124,15 +124,15 @@ return [
     |
     */
 
-  'modules' => [
-    'enabled' => env('PERMITTED_MODULES_ENABLED', false), // Default: false for simplicity
-    'require_module' => false, // If true, all permissions MUST belong to a module
-    'sub_modules' => [
-      'enabled' => env('PERMITTED_SUB_MODULES_ENABLED', false), // Even more optional!
+    'modules' => [
+        'enabled' => env('PERMITTED_MODULES_ENABLED', false), // Default: false for simplicity
+        'require_module' => false, // If true, all permissions MUST belong to a module
+        'sub_modules' => [
+            'enabled' => env('PERMITTED_SUB_MODULES_ENABLED', false), // Even more optional!
+        ],
     ],
-  ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Super Admin (Bypass All Permission Checks)
     |--------------------------------------------------------------------------
@@ -157,23 +157,23 @@ return [
     |
     */
 
-  'super_admin' => [
-    'enabled' => env('PERMITTED_SUPER_ADMIN_ENABLED', true),
+    'super_admin' => [
+        'enabled' => env('PERMITTED_SUPER_ADMIN_ENABLED', true),
 
-    // The name of the role that has super admin privileges
-    'role_name' => env('PERMITTED_SUPER_ADMIN_ROLE', 'super admin'),
+        // The name of the role that has super admin privileges
+        'role_name' => env('PERMITTED_SUPER_ADMIN_ROLE', 'super admin'),
 
-    // Optional: Define a custom gate to check super admin status
-    // Example: return $user->email === 'admin@example.com';
-    // If null, uses role_name check
-    'via_gate' => null,
+        // Optional: Define a custom gate to check super admin status
+        // Example: return $user->email === 'admin@example.com';
+        // If null, uses role_name check
+        'via_gate' => null,
 
-    // Optional: Define a custom callback for super admin check
-    // Example: fn($user) => $user->is_system_admin === true
-    'callback' => null,
-  ],
+        // Optional: Define a custom callback for super admin check
+        // Example: fn($user) => $user->is_system_admin === true
+        'callback' => null,
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Cache Configuration
     |--------------------------------------------------------------------------
@@ -182,14 +182,14 @@ return [
     |
     */
 
-  'cache' => [
-    'enabled' => env('PERMITTED_CACHE_ENABLED', true),
-    'expiration_time' => env('PERMITTED_CACHE_EXPIRATION', 3600), // seconds
-    'key_prefix' => 'permitted',
-    'store' => env('PERMITTED_CACHE_STORE', 'default'),
-  ],
+    'cache' => [
+        'enabled' => env('PERMITTED_CACHE_ENABLED', true),
+        'expiration_time' => env('PERMITTED_CACHE_EXPIRATION', 3600), // seconds
+        'key_prefix' => 'permitted',
+        'store' => env('PERMITTED_CACHE_STORE', 'default'),
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Middleware
     |--------------------------------------------------------------------------
@@ -198,12 +198,12 @@ return [
     |
     */
 
-  'middleware' => [
-    'role' => 'role',
-    'permission' => 'permission',
-  ],
+    'middleware' => [
+        'role' => 'role',
+        'permission' => 'permission',
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | User Model
     |--------------------------------------------------------------------------
@@ -212,11 +212,11 @@ return [
     |
     */
 
-  'user' => [
-    'model' => env('PERMITTED_USER_MODEL', 'App\\Models\\User'),
-  ],
+    'user' => [
+        'model' => env('PERMITTED_USER_MODEL', 'App\\Models\\User'),
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Audit Logging
     |--------------------------------------------------------------------------
@@ -226,11 +226,11 @@ return [
     |
     */
 
-  'audit_logging' => [
-    'enabled' => env('PERMITTED_AUDIT_ENABLED', false),
-  ],
+    'audit_logging' => [
+        'enabled' => env('PERMITTED_AUDIT_ENABLED', false),
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Wildcard Permissions
     |--------------------------------------------------------------------------
@@ -239,11 +239,11 @@ return [
     |
     */
 
-  'wildcards' => [
-    'enabled' => env('PERMITTED_WILDCARDS_ENABLED', false),
-  ],
+    'wildcards' => [
+        'enabled' => env('PERMITTED_WILDCARDS_ENABLED', false),
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Teams/Groups Support
     |--------------------------------------------------------------------------
@@ -253,9 +253,9 @@ return [
     |
     */
 
-  'teams' => [
-    'enabled' => env('PERMITTED_TEAMS_ENABLED', false),
-    'model' => env('PERMITTED_TEAM_MODEL', null),
-    'foreign_key' => env('PERMITTED_TEAM_KEY', 'team_id'),
-  ],
+    'teams' => [
+        'enabled' => env('PERMITTED_TEAMS_ENABLED', false),
+        'model' => env('PERMITTED_TEAM_MODEL', null),
+        'foreign_key' => env('PERMITTED_TEAM_KEY', 'team_id'),
+    ],
 ];

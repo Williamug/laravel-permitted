@@ -41,7 +41,7 @@ return new class extends Migration
     public function down(): void
     {
         $tableNames = config('permitted.table_names');
-        
+
         Schema::dropIfExists($tableNames['permission_role']);
         Schema::dropIfExists($tableNames['role_user']);
     }
